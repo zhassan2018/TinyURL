@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+ <head>
+ 	<% include ./partials/_header%>
+</head>
+<body>
+    <!-- Add your EJS code here -->
+
+    <ul>
+        <% for (x in urls) { %>
+            <li><%= urls[x]  %> - <%= x %></li>
+        <% }; %>
+    </ul>
+
+
+
+</body>
+</html>
