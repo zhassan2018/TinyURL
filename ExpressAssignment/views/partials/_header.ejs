@@ -1,4 +1,37 @@
 <head>
 
+        <% if (username === '') {%>
+     
+                      
+            <form method="POST" action=/login id="form1"> 
+
+            <input type="text" value = "username" name = "username">  
+            <input type = "submit" name = "sign in" value = "sign in">          
+
+
+            </form> <%}
+
+            else{%>
+
+            <p><%= username %></p>
+
+            <form method="POST" action=/logout id="form1"> 
+
+        
+            <input type = "submit" name = "logout" value = "logout">          
+
+
+            </form>
+
+
+            <%}%>
+
+          
+
+           
+
+            
+
 
 </head>
+
