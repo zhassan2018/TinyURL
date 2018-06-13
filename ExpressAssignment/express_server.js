@@ -67,9 +67,9 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-
-
-	urlDatabase[req.params.id]= req.body['updated']
+console.log(req.params.id)
+console.log(req.params)
+urlDatabase[req.params.id]= req.body['longURL']
 res.redirect('/urls')
 });
 
