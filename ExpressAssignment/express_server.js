@@ -30,6 +30,9 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+
+
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 
@@ -54,7 +57,22 @@ app.post("/urls", (req, res) => {
   //res.send("Ok")
   res.redirect(`/urls/${shortURL}`);
   console.log(urlDatabase)         // Respond with 'Ok' (we will replace this)
+}); 
+
+app.post("/urls/:id/delete", (req, res) => {
+
+	delete urlDatabase[req.params.id];
+	console.log(urlDatabase)
+	res.redirect('/urls/')
 });
+
+app.post("/urls/:id", (req, res) => {
+
+
+	urlDatabase[req.params.id]= req.body['updated']
+res.redirect('/urls')
+});
+
 
 
 
