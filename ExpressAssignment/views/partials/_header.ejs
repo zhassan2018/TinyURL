@@ -1,37 +1,45 @@
 <head>
 
-        <% if (username === '') {%>
-     
-                      
-            <form method="POST" action=/login id="form1"> 
+      
 
-            <input type="text" value = "username" name = "username">  
-            <input type = "submit" name = "sign in" value = "sign in">          
+           <% if (users.user_id['id'] === ''){
+           %>    
 
-
-            </form> <%}
-
-            else{%>
-
-            <p><%= username %></p>
-
-            <form method="POST" action=/logout id="form1"> 
-
-        
-            <input type = "submit" name = "logout" value = "logout">          
-
-
-            </form>
-
-
-            <%}%>
-
-          
+           <form method="POST" action=/NotLogged id="form1"> 
 
            
+           <input type = "submit" name = "login" value = "login">          
 
-            
+
+           </form> %>
+
+           <form method="POST" action=/NotRegister id="form1"> 
+
+           
+           <input type = "submit" name = "register" value = "register">          
 
 
+           </form> %>
+
+
+
+           <%}
+
+
+           else{%>
+           
+
+           <form method="POST" action=/logout id="form1"> 
+
+           
+           <input type = "submit" name = "logout" value = "logout">          
+
+
+           </form> %>
+
+           <%} %>
+
+
+       
 </head>
 

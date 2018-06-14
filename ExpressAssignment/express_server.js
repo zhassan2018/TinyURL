@@ -2,6 +2,7 @@ var express = require("express");
 var cookieParser = require('cookie-parser')
 var app = express();
 
+
 app.use(cookieParser())
 var PORT = 8080; // default port 8080
 
@@ -44,21 +45,31 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+
+	for (x in users){
+		if (x === req.cookies['user_id']){
+			IDtoSend = x;
+		}
+	}
+
+
   let templateVars = 
-  { urls: urlDatabase, username: req.cookies['username']}; 	
+  { urls: urlDatabase, user: users.IDtoSend}; 	
   res.render("urls_index", templateVars);
 });
 
-app.post("/login", (req, res) => {
-
-res.cookie('username',req.body['username'])
-res.redirect('/urls')
-});
 
 
 app.get("/urls/new", (req, res) => {
+
+	for (x in users){
+		if (x === req.cookies['user_id']){
+			IDtoSend = x;
+		}
+	}
+
 	let templateVars = 
-	{username: req.cookies["username"]}; 	
+	{user: users.IDtoSend}; 	
 	
   res.render("urls_new", templateVars);
 
@@ -67,7 +78,14 @@ app.get("/urls/new", (req, res) => {
 
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id], username: req.cookies["username"]};
+
+	for (x in users){
+		if (x === req.cookies['user_id']){
+			IDtoSend = x;
+		}
+	}
+
+  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id], user: users.IDtoSend};
   res.render("urls_show", templateVars);
 });
 
@@ -98,12 +116,43 @@ res.redirect('/urls')
 });
 
 app.post("/login", (req, res) => {
-res.cookie('username',req.body['username'])
-res.redirect('/urls')
+
+	var foundEmailandPassword = false;
+	var foundEmail = false;
+	var foundID = '';
+
+	for (x in users){
+		if (users[x]['email'] === req.body['email'] 
+			&& users[x]['password'] === req.body['password']){
+			foundEmailandPassword = true;
+		foundID = x;
+
+		}
+
+		if (users[x]['email'] === req.body['email']){
+			foundEmail = true
+		}
+
+	}
+
+if (foundEmailandPassword === false ){
+	res.status(403).send("Wrong Password")
+}
+
+else if (foundEmail === false ){
+	res.status(403).send("No email found")
+}
+
+else{
+	res.cookie('user_id',users[foundID]['id'])
+	res.redirect('/')
+}
+
+
 });
 
 app.post("/logout", (req, res) => {
-res.cookie('username','')
+res.cookie('user_id','')	
 res.redirect('/urls')
 });
 
@@ -142,7 +191,19 @@ app.post("/register", (req, res) => {
 	
 	res.cookie('user_id',randID)
 	res.redirect('/urls/')
-	console.log(req.cookies)}
+	console.log(req.cookies['user_id'])}
+});
+
+app.get("/login", (req, res) => {
+  res.render("forLogin");
+});
+
+app.post("/NotLogged", (req, res) => {
+res.redirect('/login')
+});
+
+app.post("/NotRegister", (req, res) => {
+res.redirect('/register')
 });
 
 
