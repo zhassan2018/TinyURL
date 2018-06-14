@@ -1,7 +1,7 @@
 var express = require("express");
 var cookieParser = require('cookie-parser')
 var app = express();
-
+var logout = true;
 
 app.use(cookieParser())
 var PORT = 8080; // default port 8080
@@ -47,14 +47,23 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
 
 	for (x in users){
-		if (x === req.cookies['user_id']){
-			IDtoSend = x;
+		
+		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
+			
+			IDtoSend = "";
+		}
+		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
+			IDtoSend = users.x;
+		}
+		
+		else{IDtoSend = ""
+			 
 		}
 	}
 
 
   let templateVars = 
-  { urls: urlDatabase, user: users.IDtoSend}; 	
+  { urls: urlDatabase, user: IDtoSend}; 	
   res.render("urls_index", templateVars);
 });
 
@@ -63,13 +72,22 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
 
 	for (x in users){
-		if (x === req.cookies['user_id']){
-			IDtoSend = x;
+		
+		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
+			
+			IDtoSend = "";
+		}
+		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
+			IDtoSend = users.x;
+		}
+		
+		else{IDtoSend = ""
+			 
 		}
 	}
 
 	let templateVars = 
-	{user: users.IDtoSend}; 	
+	{user: IDtoSend}; 	
 	
   res.render("urls_new", templateVars);
 
@@ -80,12 +98,21 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
 
 	for (x in users){
-		if (x === req.cookies['user_id']){
-			IDtoSend = x;
+		
+		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
+			
+			IDtoSend = "";
+		}
+		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
+			IDtoSend = users.x;
+		}
+		
+		else{IDtoSend = ""
+			 
 		}
 	}
 
-  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id], user: users.IDtoSend};
+  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id], user: IDtoSend};
   res.render("urls_show", templateVars);
 });
 
@@ -144,6 +171,7 @@ else if (foundEmail === false ){
 }
 
 else{
+	logout = false;
 	res.cookie('user_id',users[foundID]['id'])
 	res.redirect('/')
 }
@@ -152,7 +180,8 @@ else{
 });
 
 app.post("/logout", (req, res) => {
-res.cookie('user_id','')	
+res.cookie('user_id',req.cookies['user_id'])
+logout = true;
 res.redirect('/urls')
 });
 
@@ -187,11 +216,11 @@ app.post("/register", (req, res) => {
 
 
 	users[`user ${randID}`] = {id: randID, email: req.body['email'], password: req.body['password']}
-
+	
 	
 	res.cookie('user_id',randID)
 	res.redirect('/urls/')
-	console.log(req.cookies['user_id'])}
+	}
 });
 
 app.get("/login", (req, res) => {

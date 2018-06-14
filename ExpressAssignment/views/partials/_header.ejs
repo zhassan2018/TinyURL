@@ -2,7 +2,7 @@
 
       
 
-           <% if (users.user_id['id'] === ''){
+           <% if (user === ""){
            %>    
 
            <form method="POST" action=/NotLogged id="form1"> 
@@ -20,26 +20,30 @@
 
 
            </form> %>
+           
 
-
+           
 
            <%}
 
 
            else{%>
-           
 
            <form method="POST" action=/logout id="form1"> 
 
-           
+
            <input type = "submit" name = "logout" value = "logout">          
 
 
            </form> %>
+
+           
 
            <%} %>
 
 
        
 </head>
+
+
 
