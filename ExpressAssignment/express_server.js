@@ -16,6 +16,21 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
+
+
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
@@ -29,14 +44,13 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-	console.log("cookie", req.cookies['username'])
   let templateVars = 
   { urls: urlDatabase, username: req.cookies['username']}; 	
   res.render("urls_index", templateVars);
 });
 
 app.post("/login", (req, res) => {
-console.log(req.body)
+
 res.cookie('username',req.body['username'])
 res.redirect('/urls')
 });
@@ -65,10 +79,10 @@ app.get("/hello", (req, res) => {
 app.post("/urls", (req, res) => {
 	var shortURL = generateRandomString();
 	urlDatabase[shortURL]= req.body['longURL']
-  console.log(req.body);  // debug statement to see POST parameters
+   // debug statement to see POST parameters
   //res.send("Ok")
   res.redirect(`/urls/${shortURL}`);
-  console.log(urlDatabase)         // Respond with 'Ok' (we will replace this)
+           // Respond with 'Ok' (we will replace this)
 }); 
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -79,22 +93,56 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-console.log(req.params.id)
-console.log(req.params)
 urlDatabase[req.params.id]= req.body['longURL']
 res.redirect('/urls')
 });
 
 app.post("/login", (req, res) => {
-console.log(req.body)
 res.cookie('username',req.body['username'])
 res.redirect('/urls')
 });
 
 app.post("/logout", (req, res) => {
-console.log(req.body)
 res.cookie('username','')
 res.redirect('/urls')
+});
+
+app.get("/register", (req, res) => {
+  res.render("registration");
+});
+
+app.post("/register", (req, res) => {
+
+	var randID = generateRandomString();
+	var existingEmail = false;
+
+	
+
+	for (userID in users){
+		
+		if (users[userID]['email'] === req.body['email']){
+			existingEmail = true;
+
+		}
+	}
+
+	if (existingEmail){
+		res.status(400).send("Email already exists fool")
+	}
+
+	else if (req.body['email'] === '' || req.body['password'] === ''){
+		res.status(400).send("Write something fool")
+	}
+
+	else{
+
+
+	users[`user ${randID}`] = {id: randID, email: req.body['email'], password: req.body['password']}
+
+	
+	res.cookie('user_id',randID)
+	res.redirect('/urls/')
+	console.log(req.cookies)}
 });
 
 
