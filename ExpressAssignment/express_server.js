@@ -123,9 +123,9 @@ var IDtoSend = "";
 
 	for (x in users){
 		
-		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
+		if (urlDatabase[req.params['id']]['userID'] === req.cookies['user_id'] && logout === true){
 			
-			IDtoSend = "";
+			IDtoSend = "nothing";
 		}
 		else if (req.cookies['user_id'] === urlDatabase[req.params['id']]['userID'] && logout === false){
 			IDtoSend = "something";
