@@ -1,7 +1,7 @@
 var express = require("express");
 var cookieParser = require('cookie-parser')
 var app = express();
-var logout = true;
+var logout = '';
 var registered = false;
 
 app.use(cookieParser())
@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 var urlDatabase = {
-  "b2xVn2": {'fullURL':"http://www.lighthouselabs.ca"},
+  "b2xVn2": {'fullURL':"http://www.lighthouselabs.ca", 'userID':"b2xVn2"},
 };
 
 const users = { 
@@ -51,12 +51,14 @@ app.get("/urls", (req, res) => {
 		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
 			
 			IDtoSend = "";
+			break;
 		}
 		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
 			IDtoSend = users.x;
+			break;
 		}
 		
-		else{IDtoSend = ""
+		else{IDtoSend = "";
 			 
 		}
 	}
@@ -130,7 +132,7 @@ app.post("/urls", (req, res) => {
 	var shortURL = generateRandomString();
 	urlDatabase[shortURL] = {};
 	urlDatabase[shortURL]['fullURL']= req.body['longURL']
-	urlDatabase[shortURL]['userID'] = shortURL
+	urlDatabase[shortURL]['userID'] = req.cookies['user_id']
    // debug statement to see POST parameters
   //res.send("Ok")
   console.log(urlDatabase)
@@ -140,10 +142,10 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
 
-	console.log(req.params.id);
-	console.log(req.cookies['user_id'])
+	if (urlDatabase[req.params.id]['userID'] === req.cookies['user_id']){
 
-	delete urlDatabase[req.params.id];
+
+	delete urlDatabase[req.params.id];}
 	
 	res.redirect('/urls/')
 });
@@ -190,14 +192,15 @@ else if (foundEmail === false ){
 else{
 	logout = false;
 	res.cookie('user_id',users[foundID]['id'])
-	res.redirect('/')
+	res.redirect('/urls')
 }
 
 
 });
 
 app.post("/logout", (req, res) => {
-res.cookie('user_id',req.cookies['user_id'])
+
+console.log(req.cookies['user_id'])
 logout = true;
 res.redirect('/urls')
 });
@@ -232,7 +235,7 @@ app.post("/register", (req, res) => {
 	else{
 
 
-	users[`user ${randID}`] = {id: randID, email: req.body['email'], password: req.body['password']}
+	users[randID] = {id: randID, email: req.body['email'], password: req.body['password']}
 	
 	
 	res.cookie('user_id',randID)
