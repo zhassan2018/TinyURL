@@ -57,7 +57,7 @@ var currentID = ''
 		}
 		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
 			registered = true
-			IDtoSend = users.x;
+			IDtoSend = "something";
 			currentID = users[x]['id'];
 			break;
 		}
@@ -69,7 +69,7 @@ var currentID = ''
 
 let templateVars = 
 { urls:'' , user: IDtoSend}; 
-console.log(urlsForUser(currentID))
+
 
 if (registered === true && logout === false){
 	templateVars['urls'] = urlsForUser(currentID)
@@ -81,7 +81,7 @@ else{
 	templateVars['urls'] = 'NOregister'
 }	
 
-console.log(templateVars)
+
 	
   res.render("urls_index", templateVars);
 });
@@ -101,7 +101,7 @@ else{
 			IDtoSend = "";
 		}
 		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
-			IDtoSend = users.x;
+			IDtoSend = "something";
 		}
 		
 		else{IDtoSend = ""
@@ -111,7 +111,7 @@ else{
 
 	let templateVars = 
 	{user: IDtoSend}; 	
-	
+	console.log(templateVars)
   res.render("urls_new", templateVars);}
 
 });
@@ -119,6 +119,7 @@ else{
 
 
 app.get("/urls/:id", (req, res) => {
+var IDtoSend = "";
 
 	for (x in users){
 		
@@ -126,17 +127,21 @@ app.get("/urls/:id", (req, res) => {
 			
 			IDtoSend = "";
 		}
-		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
-			IDtoSend = users.x;
+		else if (req.cookies['user_id'] === urlDatabase[req.params['id']]['userID'] && logout === false){
+			IDtoSend = "something";
 		}
 		
 		else{IDtoSend = ""
 			 
 		}
 	}
-console.log(urlDatabase[req.params.id])
+
+
+
+
 
   let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id]['fullURL'], user: IDtoSend};
+  console.log(templateVars)
   res.render("urls_show", templateVars);
 });
 
@@ -174,7 +179,7 @@ app.post("/urls/:id/edit", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-urlDatabase[req.params.id]= req.body['longURL']
+urlDatabase[req.params.id]['fullURL']= req.body['longURL']
 res.redirect('/urls')
 });
 
