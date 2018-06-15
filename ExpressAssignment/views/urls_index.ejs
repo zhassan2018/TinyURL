@@ -10,8 +10,9 @@
 
     <ul>
         <% for (x in urls) { %>
-            <li><%= urls[x]  %> - <%= x %> <form method="POST" action=<%=`/urls/${x}/delete`%>>  
-            <input type="submit" value="Delete"></form>          	
+            <li><%= urls[x]['fullURL']  %> - <%= x %> <form method="POST" action=<%=`/urls/${x}/delete`%>>  
+            <input type="submit" value="Delete"></form>   <form method="POST" action=<%=`/urls/${x}/edit`%>>  
+                        <input type="submit" value="edit"></form>        	
 
              
 

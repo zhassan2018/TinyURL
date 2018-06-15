@@ -2,6 +2,7 @@ var express = require("express");
 var cookieParser = require('cookie-parser')
 var app = express();
 var logout = true;
+var registered = false;
 
 app.use(cookieParser())
 var PORT = 8080; // default port 8080
@@ -13,8 +14,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {'fullURL':"http://www.lighthouselabs.ca"},
 };
 
 const users = { 
@@ -71,6 +71,10 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
 
+	if (logout === true){
+		res.redirect('/login')
+	}
+else{
 	for (x in users){
 		
 		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
@@ -89,7 +93,7 @@ app.get("/urls/new", (req, res) => {
 	let templateVars = 
 	{user: IDtoSend}; 	
 	
-  res.render("urls_new", templateVars);
+  res.render("urls_new", templateVars);}
 
 });
 
@@ -111,8 +115,9 @@ app.get("/urls/:id", (req, res) => {
 			 
 		}
 	}
+console.log(urlDatabase[req.params.id])
 
-  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id], user: IDtoSend};
+  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id]['fullURL'], user: IDtoSend};
   res.render("urls_show", templateVars);
 });
 
@@ -123,18 +128,30 @@ app.get("/hello", (req, res) => {
 
 app.post("/urls", (req, res) => {
 	var shortURL = generateRandomString();
-	urlDatabase[shortURL]= req.body['longURL']
+	urlDatabase[shortURL] = {};
+	urlDatabase[shortURL]['fullURL']= req.body['longURL']
+	urlDatabase[shortURL]['userID'] = shortURL
    // debug statement to see POST parameters
   //res.send("Ok")
+  console.log(urlDatabase)
   res.redirect(`/urls/${shortURL}`);
            // Respond with 'Ok' (we will replace this)
 }); 
 
 app.post("/urls/:id/delete", (req, res) => {
 
+	console.log(req.params.id);
+	console.log(req.cookies['user_id'])
+
 	delete urlDatabase[req.params.id];
-	console.log(urlDatabase)
+	
 	res.redirect('/urls/')
+});
+
+app.post("/urls/:id/edit", (req, res) => {
+
+	
+	res.redirect(`/urls/${req.params.id}`)
 });
 
 app.post("/urls/:id", (req, res) => {

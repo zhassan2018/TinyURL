@@ -6,8 +6,11 @@
     <!-- Add your EJS code here -->
 
     <ul>
-       
-            <li><%= shortURL  %> - <%= fullURL %>
+
+       Current URL: 
+            <%= shortURL  %> - <%= fullURL %> <br><br><br>
+
+ Type in Update in Long URL:<br>
 
             <form method="POST" action=/urls/<%=shortURL%>>  
                         <input type="submit text"   name = "longURL" >
@@ -22,7 +25,7 @@
                            
 
 
-            </li>
+            
        
     </ul>
 
