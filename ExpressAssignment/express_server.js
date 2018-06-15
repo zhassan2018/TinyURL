@@ -1,11 +1,18 @@
 var express = require("express");
-var cookieParser = require('cookie-parser')
+var cookieSession = require('cookie-session')
 var app = express();
 var logout = '';
 var registered ='';
 const bcrypt = require('bcrypt');
 
-app.use(cookieParser())
+app.use(cookieSession({
+  name: 'session',
+  keys: ['any'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
+
 var PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
@@ -50,13 +57,13 @@ var registered = false;
 var currentID = ''
 	for (x in users){
 		
-		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
+		if (users[x]['id'] === req.session['user_id'] && logout === true){
 			registered = true;
 			IDtoSend = "";
 			currentID = users[x]['id'];
 			break;
 		}
-		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
+		else if (users[x]['id'] === req.session['user_id'] && logout === false){
 			registered = true
 			IDtoSend = "something";
 			currentID = users[x]['id'];
@@ -97,11 +104,11 @@ app.get("/urls/new", (req, res) => {
 else{
 	for (x in users){
 		
-		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
+		if (users[x]['id'] === req.session['user_id'] && logout === true){
 			
 			IDtoSend = "";
 		}
-		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
+		else if (users[x]['id'] === req.session['user_id'] && logout === false){
 			IDtoSend = "something";
 		}
 		
@@ -124,11 +131,11 @@ var IDtoSend = "";
 
 	for (x in users){
 		
-		if (urlDatabase[req.params['id']]['userID'] === req.cookies['user_id'] && logout === true){
+		if (urlDatabase[req.params['id']]['userID'] === req.session['user_id'] && logout === true){
 			
 			IDtoSend = "nothing";
 		}
-		else if (req.cookies['user_id'] === urlDatabase[req.params['id']]['userID'] && logout === false){
+		else if (req.session['user_id'] === urlDatabase[req.params['id']]['userID'] && logout === false){
 			IDtoSend = "something";
 		}
 		
@@ -155,7 +162,7 @@ app.post("/urls", (req, res) => {
 	var shortURL = generateRandomString();
 	urlDatabase[shortURL] = {};
 	urlDatabase[shortURL]['fullURL']= req.body['longURL']
-	urlDatabase[shortURL]['userID'] = req.cookies['user_id']
+	urlDatabase[shortURL]['userID'] = req.session['user_id']
    // debug statement to see POST parameters
   //res.send("Ok")
   console.log(urlDatabase)
@@ -165,7 +172,7 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
 
-	if (urlDatabase[req.params.id]['userID'] === req.cookies['user_id']){
+	if (urlDatabase[req.params.id]['userID'] === req.session['user_id']){
 
 
 	delete urlDatabase[req.params.id];}
@@ -175,7 +182,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls/:id/edit", (req, res) => {
 
-	if (urlDatabase[req.params.id]['userID'] === req.cookies['user_id']){
+	if (urlDatabase[req.params.id]['userID'] === req.session['user_id']){
 	res.redirect(`/urls/${req.params.id}`)}
 });
 
@@ -214,7 +221,7 @@ else if (foundEmail === false ){
 
 else{
 	logout = false;
-	res.cookie('user_id',users[foundID]['id'])
+	req.session['user_id'] = users[foundID]['id']
 	res.redirect('/urls')
 }
 
@@ -223,7 +230,7 @@ else{
 
 app.post("/logout", (req, res) => {
 
-console.log(req.cookies['user_id'])
+
 logout = true;
 res.redirect('/urls')
 });
@@ -261,7 +268,7 @@ app.post("/register", (req, res) => {
 	users[randID] = {id: randID, email: req.body['email'], password:bcrypt.hashSync(req.body['password'],10)}
 	
 	
-	res.cookie('user_id',randID)
+	req.session['user_id'] = randID;
 	res.redirect('/urls/')
 	}
 });
