@@ -8,6 +8,23 @@
 <body>
     <!-- Add your EJS code here -->
 
+    <% if (urls === 'NOlogin' ){
+           %> 
+           Not logged in
+
+  
+    <%}
+
+    else if(urls === "NOregister"){%>
+
+    Not registered
+
+
+
+    <%}
+
+    else {%>
+
     <ul>
         <% for (x in urls) { %>
             <li><%= urls[x]['fullURL']  %> - <%= x %> <form method="POST" action=<%=`/urls/${x}/delete`%>>  
@@ -21,6 +38,10 @@
     </ul>
 
 
+    <%}
+
+
+    %>
 
 </body>
 </html>

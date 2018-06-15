@@ -2,7 +2,7 @@ var express = require("express");
 var cookieParser = require('cookie-parser')
 var app = express();
 var logout = '';
-var registered = false;
+var registered ='';
 
 app.use(cookieParser())
 var PORT = 8080; // default port 8080
@@ -45,16 +45,20 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-
+var registered = false;
+var currentID = ''
 	for (x in users){
 		
 		if (users[x]['id'] === req.cookies['user_id'] && logout === true){
-			
+			registered = true;
 			IDtoSend = "";
+			currentID = users[x]['id'];
 			break;
 		}
 		else if (users[x]['id'] === req.cookies['user_id'] && logout === false){
+			registered = true
 			IDtoSend = users.x;
+			currentID = users[x]['id'];
 			break;
 		}
 		
@@ -63,9 +67,22 @@ app.get("/urls", (req, res) => {
 		}
 	}
 
+let templateVars = 
+{ urls:'' , user: IDtoSend}; 
+console.log(urlsForUser(currentID))
 
-  let templateVars = 
-  { urls: urlDatabase, user: IDtoSend}; 	
+if (registered === true && logout === false){
+	templateVars['urls'] = urlsForUser(currentID)
+}
+else if (registered && logout){
+	templateVars['urls'] = 'NOlogin'
+}
+else{
+	templateVars['urls'] = 'NOregister'
+}	
+
+console.log(templateVars)
+	
   res.render("urls_index", templateVars);
 });
 
@@ -152,8 +169,8 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls/:id/edit", (req, res) => {
 
-	
-	res.redirect(`/urls/${req.params.id}`)
+	if (urlDatabase[req.params.id]['userID'] === req.cookies['user_id']){
+	res.redirect(`/urls/${req.params.id}`)}
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -260,5 +277,15 @@ res.redirect('/register')
 
 function generateRandomString() {
 	return Math.random().toString(36).substr(6); }
+
+function urlsForUser(id){
+	var newURLDB={};
+	for (x in urlDatabase){
+		if (urlDatabase[x]['userID'] === id){
+			newURLDB[x] = urlDatabase[x];
+		}
+	}
+	return newURLDB
+}	
 
 
