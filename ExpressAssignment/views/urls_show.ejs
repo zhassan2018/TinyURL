@@ -6,18 +6,20 @@
     <!-- Add your EJS code here -->
 
     
-
+    <body style="font-size:20px; padding:50px;">
 
 
 
 
    <% if (user === ""){%>    
-   THIS DOES NOT BELONG TO YOU
+   <center> Looks like this URL belongs to someone else! </center>
+   <br>
+   <center> Register or Login to create your own tiny URLs! </center>
 
     <%}
 
     else if (user === "nothing"){%>    
-       YOU'RE NOT LOGED IN
+       <center> YOU'RE NOT LOGED IN </center>
 
         <%}
 

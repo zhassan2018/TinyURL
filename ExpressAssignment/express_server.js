@@ -1,7 +1,7 @@
 var express = require("express");
 var cookieSession = require('cookie-session')
 var app = express();
-var logout = '';
+var logout = true;
 var registered ='';
 const bcrypt = require('bcrypt');
 
@@ -55,17 +55,20 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
 var registered = false;
 var currentID = ''
+var EmailCurrent =''
 	for (x in users){
 		
 		if (users[x]['id'] === req.session['user_id'] && logout === true){
 			registered = true;
 			IDtoSend = "";
 			currentID = users[x]['id'];
+			
 			break;
 		}
 		else if (users[x]['id'] === req.session['user_id'] && logout === false){
 			registered = true
 			IDtoSend = "something";
+			EmailCurrent = users[x]['email']
 			currentID = users[x]['id'];
 			break;
 		}
@@ -76,7 +79,7 @@ var currentID = ''
 	}
 
 let templateVars = 
-{ urls:'' , user: IDtoSend}; 
+{ urls:'' , user: IDtoSend, email: EmailCurrent}; 
 
 
 if (registered === true && logout === false){
@@ -89,7 +92,7 @@ else{
 	templateVars['urls'] = 'NOregister'
 }	
 
-
+console.log(templateVars)
 	
   res.render("urls_index", templateVars);
 });
@@ -110,6 +113,7 @@ else{
 		}
 		else if (users[x]['id'] === req.session['user_id'] && logout === false){
 			IDtoSend = "something";
+			EmailCurrent = users[x]['email']
 		}
 		
 		else{IDtoSend = ""
@@ -118,8 +122,9 @@ else{
 	}
 
 	let templateVars = 
-	{user: IDtoSend}; 	
-	console.log(templateVars)
+	{user: IDtoSend, email: EmailCurrent}; 
+	console.log(templateVars)	
+	
   res.render("urls_new", templateVars);}
 
 });
@@ -137,6 +142,7 @@ var IDtoSend = "";
 		}
 		else if (req.session['user_id'] === urlDatabase[req.params['id']]['userID'] && logout === false){
 			IDtoSend = "something";
+			EmailCurrent = users[x]['email']
 		}
 		
 		else{IDtoSend = ""
@@ -148,7 +154,7 @@ var IDtoSend = "";
 
 
 
-  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id]['fullURL'], user: IDtoSend};
+  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id]['fullURL'], user: IDtoSend,email: EmailCurrent};
   console.log(templateVars)
   res.render("urls_show", templateVars);
 });

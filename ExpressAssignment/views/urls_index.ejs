@@ -7,23 +7,35 @@
 </head>
 <body>
     <!-- Add your EJS code here -->
+    <body style="font-size:20px; padding:50px;">
+    <br>
+    <br>
+
+   
 
     <% if (urls === 'NOlogin' ){
            %> 
-           Not logged in
+            <center>Looks like you're not logged-in!</center><br>
+    <center>Login now by clicking on the login button!</center><br>
+    
 
   
     <%}
 
     else if(urls === "NOregister"){%>
 
-    Not registered
+    <center>Looks like you're not registered!</center><br>
+    <center>Register now by clicking on the register button!</center><br>
+    
+
 
 
 
     <%}
 
     else {%>
+
+    <center>Your tiny URLs:</center>
 
     <ul>
         <% for (x in urls) { %>
