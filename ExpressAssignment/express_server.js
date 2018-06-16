@@ -92,7 +92,7 @@ else{
 	templateVars['urls'] = 'NOregister'
 }	
 
-console.log(templateVars)
+
 	
   res.render("urls_index", templateVars);
 });
@@ -123,7 +123,7 @@ else{
 
 	let templateVars = 
 	{user: IDtoSend, email: EmailCurrent}; 
-	console.log(templateVars)	
+	
 	
   res.render("urls_new", templateVars);}
 
@@ -155,7 +155,7 @@ var IDtoSend = "";
 
 
   let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id]['fullURL'], user: IDtoSend,email: EmailCurrent};
-  console.log(templateVars)
+ 
   res.render("urls_show", templateVars);
 });
 
@@ -171,7 +171,7 @@ app.post("/urls", (req, res) => {
 	urlDatabase[shortURL]['userID'] = req.session['user_id']
    // debug statement to see POST parameters
   //res.send("Ok")
-  console.log(urlDatabase)
+ 
   res.redirect(`/urls/${shortURL}`);
            // Respond with 'Ok' (we will replace this)
 }); 
