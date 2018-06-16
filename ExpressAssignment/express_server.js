@@ -145,7 +145,7 @@ var IDtoSend = "";
 			EmailCurrent = users[x]['email']
 		}
 		
-		else{IDtoSend = ""
+		else{IDtoSend = "";
 			 
 		}
 	}
