@@ -1,5 +1,5 @@
 var express = require("express");
-var cookieSession = require('cookie-session')
+var cookieSession = require('cookie-session');
 var app = express();
 var logout = true;
 var registered ='';
@@ -54,8 +54,8 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
 var registered = false;
-var currentID = ''
-var EmailCurrent =''
+var currentID = '';
+var EmailCurrent ='';
 	for (x in users){
 		
 		if (users[x]['id'] === req.session['user_id'] && logout === true){
@@ -167,8 +167,8 @@ app.get("/hello", (req, res) => {
 app.post("/urls", (req, res) => {
 	var shortURL = generateRandomString();
 	urlDatabase[shortURL] = {};
-	urlDatabase[shortURL]['fullURL']= req.body['longURL']
-	urlDatabase[shortURL]['userID'] = req.session['user_id']
+	urlDatabase[shortURL]['fullURL']= req.body['longURL'];
+	urlDatabase[shortURL]['userID'] = req.session['user_id'];
    // debug statement to see POST parameters
   //res.send("Ok")
  
@@ -212,7 +212,7 @@ app.post("/login", (req, res) => {
 		}
 
 		if (users[x]['email'] === req.body['email']){
-			foundEmail = true
+			foundEmail = true;
 		}
 
 	}
@@ -304,7 +304,7 @@ function urlsForUser(id){
 			newURLDB[x] = urlDatabase[x];
 		}
 	}
-	return newURLDB
+	return newURLDB;
 }	
 
 
