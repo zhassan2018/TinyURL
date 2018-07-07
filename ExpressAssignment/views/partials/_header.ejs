@@ -3,32 +3,16 @@
 <h2><center></center></h2>    
 <p>
 
-           <% if (user === ""){
+           <% if (email === 'empty'){
            %>    
 
-           <form method="POST" action=/NotLogged id="form1"> 
-
-           
-           <input type = "submit" name = "login" value = "login">          
-
-
-           </form> %>
-
-           <form method="POST" action=/NotRegister id="form1"> 
-
-           
-           <input type = "submit" name = "register" value = "register">          
-
-
-           </form> %>
-           
-
-           
-
+           <a href="/register" role="button" class="btn btn-primary btn-lg form-inline">Register</a>
+           <a href="/login" role="button" class="btn btn-primary btn-lg">Login</a>    
+         
            <%}
 
 
-           else if (user === "something"){%>
+           else {%>
            User:<br>
            <%=email%>
            <br>

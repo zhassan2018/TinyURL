@@ -1,16 +1,17 @@
 var express = require("express");
 var cookieSession = require('cookie-session');
 var app = express();
-var logout = true;
-var registered ='';
+var flash = require('express-flash');
 const bcrypt = require('bcrypt');
+
+
+ app.use(flash());
 
 app.use(cookieSession({
   name: 'session',
   keys: ['any'],
 
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+
 }));
 
 var PORT = 8080; // default port 8080
@@ -41,7 +42,12 @@ const users = {
 
 
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  if(req.session.user_id === null){
+  	res.redirect('/login')
+  }
+  else{
+  	res.redirect('/urls')
+  }
 });
 
 app.listen(PORT, () => {
@@ -53,44 +59,15 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-var registered = false;
-var currentID = '';
-var EmailCurrent ='';
-	for (x in users){
-		
-		if (users[x]['id'] === req.session['user_id'] && logout === true){
-			registered = true;
-			IDtoSend = "";
-			currentID = users[x]['id'];
-			
-			break;
-		}
-		else if (users[x]['id'] === req.session['user_id'] && logout === false){
-			registered = true
-			IDtoSend = "something";
-			EmailCurrent = users[x]['email']
-			currentID = users[x]['id'];
-			break;
-		}
-		
-		else{IDtoSend = "";
-			 
-		}
-	}
-
 let templateVars = 
-{ urls:'' , user: IDtoSend, email: EmailCurrent}; 
+	{ urls:'empty' , email: 'empty'};
+let user = req.session.user_id	
 
-
-if (registered === true && logout === false){
-	templateVars['urls'] = urlsForUser(currentID)
-}
-else if (registered && logout){
-	templateVars['urls'] = 'NOlogin'
-}
-else{
-	templateVars['urls'] = 'NOregister'
-}	
+	if (req.session['user_id']){
+		
+				templateVars['urls'] =  urlsForUser(users[user]['id']);
+				templateVars['email'] =  users[user]['email'];		
+	}
 
 
 	
@@ -100,197 +77,176 @@ else{
 
 
 app.get("/urls/new", (req, res) => {
-
-	if (logout === true){
-		res.redirect('/login')
-	}
-else{
-	for (x in users){
-		
-		if (users[x]['id'] === req.session['user_id'] && logout === true){
-			
-			IDtoSend = "";
-		}
-		else if (users[x]['id'] === req.session['user_id'] && logout === false){
-			IDtoSend = "something";
-			EmailCurrent = users[x]['email']
-		}
-		
-		else{IDtoSend = ""
-			 
-		}
-	}
-
 	let templateVars = 
-	{user: IDtoSend, email: EmailCurrent}; 
-	
-	
-  res.render("urls_new", templateVars);}
+		{email: 'empty'};
+	let user = req.session.user_id	
+	console.log(req.session.user_id, "first one")
 
+	if (req.session['user_id']){
+		
+		templateVars['email'] =  users[user]['email'];
+		
+		res.render("urls_new", templateVars);	
+	}
+
+	else {
+	res.redirect('/login')}
+	
 });
 
 
 
 app.get("/urls/:id", (req, res) => {
-var IDtoSend = "";
 
-	for (x in users){
-		
-		if (urlDatabase[req.params['id']]['userID'] === req.session['user_id'] && logout === true){
-			
-			IDtoSend = "nothing";
-		}
-		else if (req.session['user_id'] === urlDatabase[req.params['id']]['userID'] && logout === false){
-			IDtoSend = "something";
-			EmailCurrent = users[x]['email']
-		}
-		
-		else{IDtoSend = "";
-			 
-		}
-	}
+let templateVars = { shortURL: 'empty', fullURL: 'empty', email: 'empty', status : 'not_logged_in'};
+let user = req.session.user_id;	
 
+if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] === req.session['user_id']){
+	templateVars['shortURL'] = req.params.id;
+	templateVars['fullURL'] = urlDatabase[req.params.id]['fullURL'];
+	templateVars['email'] = users[user]['email'];
+	templateVars['status'] = "logged_in";
+}
 
+else if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] !== req.session['user_id']){
+	templateVars['shortURL'] = req.paarams.id;
+	templateVars['fullURL'] = urlDatabase[req.params.id]['fullURL'];
+	templateVars['email'] = users[user]['email'];
+	templateVars['status'] = "not_owner";
+}
 
-
-
-  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id]['fullURL'], user: IDtoSend,email: EmailCurrent};
+	
  
   res.render("urls_show", templateVars);
 });
 
 
-app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
+app.get("/u/:id", (req, res) => {
+  for (url in urlDatabase){
+  	if (url === req.params.id){
+  		res.redirect(`/urls/${req.params.id}`)
+  	}
+  }
 });
 
 app.post("/urls", (req, res) => {
+	if (req.session.user_id){
 	var shortURL = generateRandomString();
 	urlDatabase[shortURL] = {};
 	urlDatabase[shortURL]['fullURL']= req.body['longURL'];
 	urlDatabase[shortURL]['userID'] = req.session['user_id'];
-   // debug statement to see POST parameters
-  //res.send("Ok")
  
   res.redirect(`/urls/${shortURL}`);
-           // Respond with 'Ok' (we will replace this)
+}
+else{
+	req.flash('info','welcome');
+}
 }); 
 
 app.post("/urls/:id/delete", (req, res) => {
 
 	if (urlDatabase[req.params.id]['userID'] === req.session['user_id']){
-
-
-	delete urlDatabase[req.params.id];}
-	
+	delete urlDatabase[req.params.id];
 	res.redirect('/urls/')
+}
+else{
+	req.flash('info','welcome')
+}
+	
 });
 
 app.post("/urls/:id/edit", (req, res) => {
 
 	if (urlDatabase[req.params.id]['userID'] === req.session['user_id']){
 	res.redirect(`/urls/${req.params.id}`)}
+	else{
+		req.flash('info','welcome')
+	}
 });
 
 app.post("/urls/:id", (req, res) => {
+if (req.session.user_id && urlDatabase[req.params['id']]['userID'] === req.session['user_id']){	
 urlDatabase[req.params.id]['fullURL']= req.body['longURL']
-res.redirect('/urls')
+res.redirect('/urls');
+}
 });
 
 app.post("/login", (req, res) => {
 
-	var foundEmailandPassword = false;
-	var foundEmail = false;
-	var foundID = '';
-
-	for (x in users){
-		if (users[x]['email'] === req.body['email'] 
-			&& bcrypt.compareSync(req.body['password'],users[x]['password'])){
-			foundEmailandPassword = true;
-		foundID = x;
-
-		}
-
-		if (users[x]['email'] === req.body['email']){
-			foundEmail = true;
-		}
-
-	}
-
-if (foundEmailandPassword === false ){
-	res.status(403).send("Wrong Password")
-}
-
-else if (foundEmail === false ){
-	res.status(403).send("No email found")
-}
-
-else{
-	logout = false;
-	req.session['user_id'] = users[foundID]['id']
+	for (user in users){
+	if (users[user]['email'] === req.body['email'] 
+			&& bcrypt.compareSync(req.body['password'],users[user]['password'])){
+		req.session['user_id'] = users[user]['id'];
 	res.redirect('/urls')
 }
+}
 
+
+req.flash('error',"something wrong in login");
+res.render('forLogin',{
+	errors: req.flash('error')
+})
 
 });
 
 app.post("/logout", (req, res) => {
-
-
-logout = true;
+req.session = null;
 res.redirect('/urls')
 });
 
 app.get("/register", (req, res) => {
-  res.render("registration");
+	if (req.session.user_id){
+		res.redirect('/urls')
+	}
+
+  res.render("registration", {
+  	errors: null
+  });
 });
 
 app.post("/register", (req, res) => {
 
 	var randID = generateRandomString();
 	var existingEmail = false;
-
 	
 
 	for (userID in users){
 		
 		if (users[userID]['email'] === req.body['email']){
-			existingEmail = true;
+			req.flash('error',"email already exists");
+			res.render('registration',{
+				errors: req.flash('error')
+			})
 
 		}
 	}
 
-	if (existingEmail){
-		res.status(400).send("Email already exists fool")
-	}
-
-	else if (req.body['email'] === '' || req.body['password'] === ''){
-		res.status(400).send("Write something fool")
+	if (req.body['email'] === '' || req.body['password'] === ''){
+		req.flash('error',"You must write something");
+		res.render('registration',{
+			errors: req.flash('error')
+		})
 	}
 
 	else{
-
 
 	users[randID] = {id: randID, email: req.body['email'], password:bcrypt.hashSync(req.body['password'],10)}
 	
 	
 	req.session['user_id'] = randID;
-	res.redirect('/urls/')
+	res.redirect('/urls')
 	}
 });
 
 app.get("/login", (req, res) => {
-  res.render("forLogin");
-});
+	if (req.session.user_id){
+		res.redirect('/urls')
+	}
 
-app.post("/NotLogged", (req, res) => {
-res.redirect('/login')
+  res.render("forLogin", {
+  	errors: null
+  });
 });
-
-app.post("/NotRegister", (req, res) => {
-res.redirect('/register')
-});
-
 
 
 

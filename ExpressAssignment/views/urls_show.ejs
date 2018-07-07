@@ -3,7 +3,6 @@
  <% include ./partials/_header %> 
 </head>
 <body>
-    <!-- Add your EJS code here -->
 
     
     <body style="font-size:20px; padding:50px;">
@@ -11,14 +10,14 @@
 
 
 
-   <% if (user === ""){%>    
+   <% if (status === 'not_owner'){%>    
    <center> Looks like this URL belongs to someone else! </center>
    <br>
    <center> Register or Login to create your own tiny URLs! </center>
 
     <%}
 
-    else if (user === "nothing"){%>    
+    else if (status === "not_logged_in"){%>    
        <center> YOU'RE NOT LOGED IN </center>
 
         <%}
@@ -28,7 +27,7 @@
    
 
 
-   else if (user === "something"){%>
+   else if (status === "logged_in"){%>
 
       <ul>
 <center>
