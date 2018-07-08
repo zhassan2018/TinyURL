@@ -22,6 +22,8 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 
+
+
 var urlDatabase = {
   "b2xVn2": {'fullURL':"http://www.lighthouselabs.ca", 'userID':"b2xVn2"},
 };
