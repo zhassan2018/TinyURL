@@ -1,13 +1,31 @@
 <head>
-<div style="background-color:lightblue">
-<h2><center></center></h2>    
-<p>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+#firstButton{background-color:grey; border: 2px solid black; border-radius: 0px; height:70px; width: 115px; margin-bottom:-20px}
+
+#secondButton{background-color:grey; border: 2px solid black; border-radius: 0px}
+
+#thirdButton{background-color:grey; border: 2px solid black; border-radius: 0px; width:115px}
+
+#fourthButton{background-color:grey; border: 2px solid black; border-radius: 0px; width:115px}
+
+#bigDiv{background-color:lightgrey; margin-left:-50px; margin-right:-50px; margin-top:-50px; display: flex; justify-content:space-between}
+
+</style>
+<div id="bigDiv">
+<h1><center>tinyURL</center></h1>    
+
+
+ 
+
 
            <% if (!user_id){
            %>    
 
-           <a href="/register" role="button" class="btn btn-primary btn-lg form-inline">Register</a>
-           <a href="/login" role="button" class="btn btn-primary btn-lg">Login</a>    
+           <a id="thirdButton" href="/register" role="button" class="btn btn-primary btn-lg">Register</a>
+           <a id="fourthButton" href="/login" role="button" class="btn btn-primary btn-lg">Login</a>    
          
            <%}
 
@@ -18,22 +36,22 @@
            <br>
 
 
-           <form method="POST" action=/logout id="form1"> 
+           <form  method="POST" action=/logout id="form1"> 
 
 
 
-           <input type = "submit" name = "logout" value = "logout">          
+           <input id="firstButton" type = "submit" class="btn btn-primary btn-lg" name = "logout" value = "logout">          
 
 
            </form> %>
-           <a href="/urls/new" role="button" class="btn btn-primary btn-lg">New URL</a>    
+           <a id="secondButton" href="/urls/new" role="button" class="btn btn-primary btn-lg">New URL</a>    
 
 
 
            
 
            <%} %>
-</p>
+
 </div>
 
        

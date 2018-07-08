@@ -30,18 +30,34 @@
     else {%>
 
     <h3><center>Your Tiny URLs:</center></h3>
+    <table class="table">
+        <thead>
+            <tr>
+            <th>Full URL</th>
+            <th>tinyURL</th>
+            <th>Delete</th>
+            <th>Update</th>
+        </tr>
+        </thead>
 
-    <ul>
+        <tbody>
+
+
         <% for (x in urls) { %>
-            <li><%= urls[x]['fullURL']  %> - <%= x %> <form method="POST" action=<%=`/urls/${x}/delete`%>>  
-            <input type="submit" value="Delete"></form>   <form method="POST" action=<%=`/urls/${x}/edit`%>>  
-                        <input type="submit" value="edit"></form>        	
+        <tr>
+           <td> <%= urls[x]['fullURL']  %> </td>
+           <td> <%= x %> </td> 
+           <td> <form method="POST" action=<%=`/urls/${x}/delete`%>>  
+            <input type="submit" value="Delete"></form> </td>  
+
+            <td><form method="POST" action=<%=`/urls/${x}/edit`%>>  
+                        <input type="submit" value="edit"></form></td>        	
 
              
 
-            </li>
+            
         <% }; %>
-    </ul>
+    
 
 
     <%}

@@ -138,7 +138,7 @@ app.get("/u/:id", (req, res) => {
 	let templateVars = {user_id: user, shortURL: 'empty', fullURL: 'empty', email: 'empty', status : 'does_not_exist'};	
   for (url in urlDatabase){
   	if (url === req.params.id){
-  		res.redirect(`/urls/${req.params.id}`)
+  		res.redirect(`http://${urlDatabase[req.params.id]['fullURL']}`)
   	}
   }
   res.render('urls_show', templateVars)
