@@ -5,7 +5,7 @@ var flash = require('express-flash');
 const bcrypt = require('bcrypt');
 
 
- app.use(flash());
+app.use(flash());
 
 app.use(cookieSession({
   name: 'session',
@@ -40,33 +40,35 @@ const users = {
 };
 
 
-
-app.get("/", (req, res) => {
-  if(req.session.user_id === null){
-  	res.redirect('/login')
-  }
-  else{
-  	res.redirect('/urls')
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/", (req, res) => {
+  if(req.session.user_id){
+  	res.redirect('/urls')
+  }
+  else{
+  	res.redirect('/login')
+  }
+});
+
+
+
 app.get("/urls", (req, res) => {
+let user = req.session.user_id;
 let templateVars = 
-	{ urls:'empty' , email: 'empty'};
-let user = req.session.user_id	
+	{user_id: user, urls:'empty' , email: 'empty', errors: null};	
 
 	if (req.session['user_id']){
 		
 				templateVars['urls'] =  urlsForUser(users[user]['id']);
-				templateVars['email'] =  users[user]['email'];		
+				templateVars['email'] =  users[user]['email'];
+
+	}
+	else{
+		req.flash('error', 'Looks like you are not logged-in');
+		templateVars['errors'] = req.flash('error')
 	}
 
 
@@ -77,9 +79,9 @@ let user = req.session.user_id
 
 
 app.get("/urls/new", (req, res) => {
+	let user = req.session.user_id;
 	let templateVars = 
-		{email: 'empty'};
-	let user = req.session.user_id	
+		{user_id: user, email: 'empty'};	
 	console.log(req.session.user_id, "first one")
 
 	if (req.session['user_id']){
@@ -98,8 +100,16 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
 
-let templateVars = { shortURL: 'empty', fullURL: 'empty', email: 'empty', status : 'not_logged_in'};
 let user = req.session.user_id;	
+let templateVars = {user_id: user, shortURL: 'empty', fullURL: 'empty', email: 'empty', status : 'does_not_exist'};
+
+for (url in urlDatabase){
+	if(url === req.session.user_id){
+		templateVars['status'] = 'not_logged_in';
+	}
+
+}
+
 
 if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] === req.session['user_id']){
 	templateVars['shortURL'] = req.params.id;
@@ -122,11 +132,15 @@ else if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] !== r
 
 
 app.get("/u/:id", (req, res) => {
+	let user = req.session.user_id;	
+	let templateVars = {user_id: user, shortURL: 'empty', fullURL: 'empty', email: 'empty', status : 'does_not_exist'};	
   for (url in urlDatabase){
   	if (url === req.params.id){
   		res.redirect(`/urls/${req.params.id}`)
   	}
   }
+  res.render('urls_show', templateVars)
+
 });
 
 app.post("/urls", (req, res) => {
@@ -139,7 +153,9 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 }
 else{
-	req.flash('info','welcome');
+	let user = req.session.user_id;	
+	let templateVars = {user_id: user, shortURL: 'empty', fullURL: 'empty', email: 'empty', status : 'not_logged_in'};
+	res.render('urls_show', templateVars);
 }
 }); 
 
@@ -261,6 +277,11 @@ function urlsForUser(id){
 		}
 	}
 	return newURLDB;
-}	
+}
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
 
 

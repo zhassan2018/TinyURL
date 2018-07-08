@@ -3,7 +3,7 @@
 <h2><center></center></h2>    
 <p>
 
-           <% if (email === 'empty'){
+           <% if (!user_id){
            %>    
 
            <a href="/register" role="button" class="btn btn-primary btn-lg form-inline">Register</a>
@@ -26,6 +26,8 @@
 
 
            </form> %>
+           <a href="/urls/new" role="button" class="btn btn-primary btn-lg">New URL</a>    
+
 
 
            
