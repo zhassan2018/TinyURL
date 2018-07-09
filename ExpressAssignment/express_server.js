@@ -121,7 +121,7 @@ if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] === req.se
 }
 
 else if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] !== req.session['user_id']){
-	templateVars['shortURL'] = req.paarams.id;
+	templateVars['shortURL'] = req.params.id;
 	templateVars['fullURL'] = urlDatabase[req.params.id]['fullURL'];
 	templateVars['email'] = users[user]['email'];
 	templateVars['status'] = "not_owner";

@@ -1,34 +1,53 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <title>TinyApp</title>
- <head>
- 	
-</head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+h1 {font-size:500%;}
+input.btn.btn-default{width:100%;}
+</style>
+ </head>
+  
+
 <body>
-    <!-- Add your EJS code here -->
-    <div style="background-color:lightblue">
-    <h2><center>Please log-in</center></h2>    
-    <p>
-    <ul>
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6"> 
+
+
+
+    <h1><center>tinyURL</center></h1>    
+
         
 
-       <form method="POST" action=/login id="form1"> 
-        Email Adress: <br>  
-        <input type="email"   name = "email" ><br/>
-        Password: <br>
-        <input type = "password" name = "password"> <br>
-        <input type="submit" value="submit">  
+        <form method="POST" action=/login id="form1">
+        <div class="form-group" >
+        <h2><center>Please Log-in</center></h2>    
+    
+        <label for="exampleInputEmail1">Email address</label> 
+        <input type="email" name = "email" class="form-control" placeholder="Email" >
+        </div>
+        <div class="form-group" >
+        <label for="exampleInputPassword1">Password</label>
+        <input type = "password" name = "password" class="form-control" placeholder="Password"> 
+        </div>
+        <input type="submit" class="btn btn-default" value="submit">          
+        
 
-                
-
-       </form>        	
+        </form>           
                              
-    </ul>
-    <% if (errors) { %>
-    <p class='error'><%= errors %></p>
-  <%} %>
-</p>
+    
+      <% if (errors) { %>
+      <p class='error'><%= errors %></p>
+    <%} %>
+
+</div>
+</div>
 </div>
 </body>
 
