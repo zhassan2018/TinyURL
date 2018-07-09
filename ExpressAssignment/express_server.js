@@ -106,12 +106,15 @@ let user = req.session.user_id;
 let templateVars = {user_id: user, shortURL: 'empty', fullURL: 'empty', email: 'empty', status : 'does_not_exist'};
 
 for (url in urlDatabase){
-	if(url === req.session.user_id){
-		templateVars['status'] = 'not_logged_in';
+	if(url === req.params.id){
+		templateVars['status'] = 'logged_out';
 	}
 
 }
 
+if(templateVars['status'] ==='does_not_exist'){
+	res.render("urls_show", templateVars);
+}
 
 if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] === req.session['user_id']){
 	templateVars['shortURL'] = req.params.id;
@@ -127,7 +130,7 @@ else if (req.session['user_id'] && urlDatabase[req.params['id']]['userID'] !== r
 	templateVars['status'] = "not_owner";
 }
 
-	
+console.log(templateVars.status)
  
   res.render("urls_show", templateVars);
 });
